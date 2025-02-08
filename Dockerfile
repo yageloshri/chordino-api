@@ -38,8 +38,8 @@ COPY . /app
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# שלב 7: פתיחת פורט (אם נדרש)
+# שלב 7: פתיחת פורט
 EXPOSE 5000
 
-# שלב 8: פקודת הפעלה
-CMD ["python3", "app.py"]
+# שלב 8: פקודת הפעלה (מתוקנת ל-Render)
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
