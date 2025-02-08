@@ -4,6 +4,11 @@ import os
 
 app = Flask(__name__)
 
+# נתיב בדיקה לשרת
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({"message": "Server is live!"}), 200
+
 @app.route('/extract_chords', methods=['POST'])
 def extract_chords():
     if 'audio' not in request.files:
@@ -22,19 +27,4 @@ def extract_chords():
             ['vamp-simple-host', 'chordinoplugin:chordino', file_path],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            check=True  # מוסיף בדיקת שגיאות
-        )
-
-        chords_output = result.stdout.decode('utf-8')
-        return jsonify({"chords": chords_output})
-
-    except subprocess.CalledProcessError as e:
-        error_message = e.stderr.decode('utf-8')
-        return jsonify({"error": "Chordino processing failed", "details": error_message}), 500
-
-    finally:
-        if os.path.exists(file_path):
-            os.remove(file_path)
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+            check=Tru
