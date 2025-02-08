@@ -1,14 +1,24 @@
-FROM ubuntu:20.04
+FROM python:3.9-slim
 
-RUN apt-get update && apt-get install -y \
-    vamp-plugin-sdk vamp-examples vamp-plugin-chordino python3 python3-pip ffmpeg
+# עדכון מקורות והתקנת תלותים בסיסיים
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    vamp-plugin-sdk \
+    vamp-examples \
+    vamp-plugin-chordino \
+    python3 \
+    python3-pip \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install flask
+# התקנת התלויות של Python
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /app
-WORKDIR /app
+# העתקת קבצי הקוד
+COPY . .
 
-EXPOSE 5000
-
-CMD ["python3", "app.py"]
-
+# הרצת האפליקציה
+CMD ["python", "app.py"]
