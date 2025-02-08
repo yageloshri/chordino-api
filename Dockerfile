@@ -15,12 +15,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     python3 \
     python3-pip \
+    python3-dev \
+    libsndfile1 \
+    libsndfile1-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # שלב 3: הורדה והתקנה של Chordino ממקור הקוד ב-GitHub
 RUN git clone https://github.com/ohollo/chord-extractor.git \
     && cd chord-extractor \
-    && python3 setup.py install \
+    && pip install . \
     && cd .. \
     && rm -rf chord-extractor
 
