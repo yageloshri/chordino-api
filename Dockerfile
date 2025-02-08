@@ -20,23 +20,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libsndfile1-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# שלב 3: הורדה והתקנה של Chordino ממקור הקוד ב-GitHub
+# שלב 3: התקנת תלות מוקדמת (numpy)
+RUN pip install numpy
+
+# שלב 4: הורדה והתקנה של Chordino ממקור הקוד ב-GitHub
 RUN git clone https://github.com/ohollo/chord-extractor.git \
     && cd chord-extractor \
     && pip install . \
     && cd .. \
     && rm -rf chord-extractor
 
-# שלב 4: העתקת קבצי הפרויקט
+# שלב 5: העתקת קבצי הפרויקט
 WORKDIR /app
 COPY . /app
 
-# שלב 5: התקנת ספריות Python
+# שלב 6: התקנת ספריות Python
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# שלב 6: פתיחת פורט (אם נדרש)
+# שלב 7: פתיחת פורט (אם נדרש)
 EXPOSE 5000
 
-# שלב 7: פקודת הפעלה
+# שלב 8: פקודת הפעלה
 CMD ["python3", "app.py"]
