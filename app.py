@@ -6,19 +6,35 @@ app = Flask(__name__)
 
 @app.route('/extract_chords', methods=['POST'])
 def extract_chords():
+    if 'audio' not in request.files:
+        return jsonify({"error": "No audio file provided"}), 400
+
     audio_file = request.files['audio']
+    if audio_file.filename == '':
+        return jsonify({"error": "Empty filename"}), 400
+
     file_path = f"/tmp/{audio_file.filename}"
     audio_file.save(file_path)
 
-    # הרצת Chordino
-    result = subprocess.run(['vamp-simple-host', 'chordinoplugin:chordino', file_path],
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        # הרצת Chordino
+        result = subprocess.run(
+            ['vamp-simple-host', 'chordinoplugin:chordino', file_path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=True  # מוסיף בדיקת שגיאות
+        )
 
-    chords_output = result.stdout.decode('utf-8')
-    os.remove(file_path)
+        chords_output = result.stdout.decode('utf-8')
+        return jsonify({"chords": chords_output})
 
-    return jsonify({"chords": chords_output})
+    except subprocess.CalledProcessError as e:
+        error_message = e.stderr.decode('utf-8')
+        return jsonify({"error": "Chordino processing failed", "details": error_message}), 500
+
+    finally:
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-
+    app.run(host='0.0.0.0', port=5000, debug=True)
