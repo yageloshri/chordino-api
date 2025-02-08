@@ -1,29 +1,28 @@
 # שלב 1: שימוש בתמונה בסיסית של Python
 FROM python:3.9-slim
 
-# שלב 2: עדכון מקורות והתקנת תלותיות בסיסיות
+# שלב 2: עדכון מקורות והתקנת תלותיות
 RUN apt-get update && apt-get install -y --no-install-recommends \
     software-properties-common \
     ca-certificates \
     gnupg \
     lsb-release \
     wget \
+    git \
+    build-essential \
+    vamp-plugin-sdk \
+    vamp-examples \
     ffmpeg \
     python3 \
     python3-pip \
-    vamp-plugin-sdk \
-    vamp-examples \
     && rm -rf /var/lib/apt/lists/*
 
-# שלב 3: הורדה והתקנה של vamp-plugin-chordino ממקור הקוד
-RUN wget https://code.soundsoftware.ac.uk/attachments/download/1202/chordino-1.1.zip \
-    && apt-get install -y unzip \
-    && unzip chordino-1.1.zip \
-    && cd chordino-1.1 \
-    && make \
-    && make install \
+# שלב 3: הורדה והתקנה של Chordino ממקור הקוד ב-GitHub
+RUN git clone https://github.com/ohollo/chord-extractor.git \
+    && cd chord-extractor \
+    && python3 setup.py install \
     && cd .. \
-    && rm -rf chordino-1.1 chordino-1.1.zip
+    && rm -rf chord-extractor
 
 # שלב 4: העתקת קבצי הפרויקט
 WORKDIR /app
