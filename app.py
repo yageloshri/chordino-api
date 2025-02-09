@@ -29,3 +29,20 @@ def extract_chords():
             stderr=subprocess.PIPE,
             check=True
         )
+
+        chords_output = result.stdout.decode('utf-8')
+        return jsonify({"chords": chords_output}), 200
+
+    except subprocess.CalledProcessError as e:
+        error_message = e.stderr.decode('utf-8')
+        return jsonify({"error": f"Chordino processing failed: {error_message}"}), 500
+
+    except Exception as e:
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+
+    finally:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
