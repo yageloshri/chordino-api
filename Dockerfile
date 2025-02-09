@@ -27,8 +27,12 @@ RUN pip install numpy
 RUN git clone https://github.com/ohollo/chord-extractor.git \
     && cd chord-extractor \
     && pip install . \
+    && cp -r vamp /usr/local/lib/vamp \
     && cd .. \
     && rm -rf chord-extractor
+
+# הגדרת משתנה סביבה ל-Vamp
+ENV VAMP_PATH=/usr/local/lib/vamp
 
 # שלב 5: העתקת קבצי הפרויקט
 WORKDIR /app
