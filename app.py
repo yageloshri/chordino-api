@@ -28,3 +28,4 @@ def extract_chords():
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             check=True
+            }
