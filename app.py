@@ -27,4 +27,4 @@ def extract_chords():
             ['vamp-simple-host', 'chordinoplugin:chordino', file_path],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            check=Tru
+            check=True
