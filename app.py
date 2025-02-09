@@ -22,9 +22,9 @@ def extract_chords():
     audio_file.save(file_path)
 
     try:
-        # הרצת Chordino
+        # הרצת Chordino עם השם הנכון של הפלאגין
         result = subprocess.run(
-            ['vamp-simple-host', 'chordinoplugin:chordino', file_path],
+            ['vamp-simple-host', 'vamp-plugin-chordino:chordino', file_path],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             check=True
