@@ -30,12 +30,18 @@ RUN git clone https://github.com/ohollo/chord-extractor.git \
     && cd .. \
     && rm -rf chord-extractor
 
+# יצירת תיקיית VAMP אם לא קיימת
+RUN mkdir -p /usr/local/lib/vamp
+
 # הגדרת משתנה סביבה ל-Vamp
-ENV VAMP_PATH=/usr/local/lib/python3.9/site-packages/vamp
+ENV VAMP_PATH=/usr/local/lib/vamp
 
 # שלב 5: העתקת קבצי הפרויקט
 WORKDIR /app
 COPY . /app
+
+# ניקוי קבצים זמניים ישנים
+RUN find /app -name '*.pyc' -delete
 
 # שלב 6: התקנת ספריות Python
 RUN pip install --upgrade pip
@@ -45,4 +51,4 @@ RUN pip install -r requirements.txt
 EXPOSE 5000
 
 # שלב 8: פקודת הפעלה (מתוקנת ל-Render)
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "--workers", "2", "--threads", "4", "--timeout", "30", "--bind", "0.0.0.0:5000", "app:app"]
