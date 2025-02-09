@@ -12,27 +12,29 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     vamp-plugin-sdk \
     vamp-examples \
-    vamp-plugin-chordino \    # ✅ הוספת החבילה החסרה
-    ffmpeg \
+    libsndfile1 \
+    libsndfile1-dev \
     python3 \
     python3-pip \
     python3-dev \
-    libsndfile1 \
-    libsndfile1-dev \
-    && rm -rf /var/lib/apt/lists/*
+    ffmpeg && \
+    rm -rf /var/lib/apt/lists/*
 
 # שלב 3: התקנת תלות מוקדמת (numpy)
 RUN pip install numpy
 
-# שלב 4: הורדת והתקנת Chordino ממקור הקוד ב-GitHub
+# שלב 4: הורדה והתקנה של Chordino ממקור הקוד ב-GitHub
 RUN git clone https://github.com/ohollo/chord-extractor.git \
     && cd chord-extractor \
     && pip install . \
     && cd .. \
     && rm -rf chord-extractor
 
-# הגדרת משתנה סביבה ל-Vamp (נתיב ברירת המחדל)
-ENV VAMP_PATH=/usr/lib/vamp
+# יצירת תיקיית VAMP אם לא קיימת
+RUN mkdir -p /usr/local/lib/vamp
+
+# הגדרת משתנה סביבה ל-Vamp
+ENV VAMP_PATH=/usr/local/lib/vamp
 
 # שלב 5: העתקת קבצי הפרויקט
 WORKDIR /app
